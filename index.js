@@ -6,6 +6,8 @@ import morgan from "morgan";
 import userRoute from "./routes/User.js";
 import taskRoute from "./routes/Task.js";
 import subTaskRoute from "./routes/SubTask.js";
+import priorityCronJob from "./chron-jobs/priorityChronJob.js";
+import callDueCronJob from "./chron-jobs/callDueChronJob.js";
 
 const app = express();
 dotenv.config();
@@ -38,6 +40,10 @@ app.use(express.json());
 app.use("/api/user/", userRoute);
 app.use("/api/task/", taskRoute);
 app.use("/api/sub-task/", subTaskRoute);
+
+// Chron Jobs
+priorityCronJob.start();
+callDueCronJob.start();
 
 app.use((err, req, res, next) => {
   const status = err.status || 500;

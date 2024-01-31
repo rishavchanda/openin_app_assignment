@@ -19,6 +19,8 @@
     "mongoose": "^7.0.4",
     "mongoose-paginate-v2": "^1.8.0",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.22"
+    "node-cron": "^3.0.3",
+    "nodemon": "^2.0.22",
+    "twilio": "^4.21.0"
   }
 }
