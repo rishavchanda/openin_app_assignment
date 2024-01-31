@@ -3,6 +3,9 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import morgan from "morgan";
+import userRoute from "./routes/User.js";
+import taskRoute from "./routes/Task.js";
+import subTaskRoute from "./routes/SubTask.js";
 
 const app = express();
 dotenv.config();
@@ -32,7 +35,9 @@ const connect = () => {
 
 app.use(express.json());
 
-// app.use("/api/", questionRoute);
+app.use("/api/user/", userRoute);
+app.use("/api/task/", taskRoute);
+app.use("/api/sub-task/", subTaskRoute);
 
 app.use((err, req, res, next) => {
   const status = err.status || 500;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const taskSchema = new mongoose.Schema(
   {
@@ -18,6 +19,7 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       required: true,
       enum: [0, 1, 2, 3],
+      default: 0,
     },
     status: {
       type: String,
@@ -37,5 +39,7 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const TaskModel = mongoose.model("Task", taskSchema);
-export default TaskModel;
+taskSchema.plugin(mongoosePaginate);
+
+const Task = mongoose.model("Task", taskSchema);
+export default Task;
