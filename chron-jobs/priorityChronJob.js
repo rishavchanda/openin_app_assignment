@@ -1,6 +1,5 @@
 import cron from "node-cron";
 import Task from "../models/Tasks.js";
-import SubTask from "../models/Subtasks.js";
 
 // Cron job will run every day at midnight
 export default cron.schedule("0 0 * * *", async () => {
@@ -28,20 +27,6 @@ export default cron.schedule("0 0 * * *", async () => {
           task.priority = 2;
         } else {
           task.priority = 3;
-        }
-
-        // Check subtask status to update task status
-        const subtasks = await SubTask.find({
-          task_id: task._id,
-          deleted_at: null,
-        });
-
-        if (subtasks.length === 0) {
-          task.status = "TODO";
-        } else if (subtasks.some((subtask) => subtask.status === 1)) {
-          task.status = "IN_PROGRESS";
-        } else {
-          task.status = "DONE";
         }
 
         // Save the updated task

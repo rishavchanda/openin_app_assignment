@@ -23,6 +23,7 @@ export const createSubTask = async (req, res, next) => {
 
     // Save the sub task to the database
     const savedSubTask = await newSubTask.save();
+    await updateTaskStatus(task_id);
 
     await res.status(201).json({
       message: "Sub Task created successfully.",
@@ -115,6 +116,8 @@ export const updateSubTask = async (req, res, next) => {
     // Save the updated subtask
     await subtask.save();
 
+    await updateTaskStatus(subtask.task_id);
+
     res.json({ message: "Subtask updated successfully.", subtask });
   } catch (err) {
     return next(
@@ -165,11 +168,42 @@ export const deleteSubTask = async (req, res, next) => {
 
     // Save the updated subtask
     await subtask.save();
+    await updateTaskStatus(subtask.task_id);
 
     res.json({ message: "Subtask deleted successfully.", subtask });
   } catch (err) {
     return next(
       createError(err.statusCode || 500, err.message || "Internal Server Error")
+    );
+  }
+};
+
+// UTIL Functions
+
+// Function to update the task status based on subtasks
+const updateTaskStatus = async (task_id) => {
+  try {
+    const task = await Task.findById(task_id);
+    if (!task) {
+      throw createError(404, "Task not found.");
+    }
+
+    const subtasks = await SubTask.find({ task_id, deleted_at: null });
+
+    if (subtasks.every((subtask) => subtask.status === 1)) {
+      task.status = "DONE";
+    } else if (subtasks.some((subtask) => subtask.status === 1)) {
+      task.status = "IN_PROGRESS";
+    } else {
+      task.status = "TODO";
+    }
+
+    // Save the updated task status
+    await task.save();
+  } catch (error) {
+    throw createError(
+      error.statusCode || 500,
+      error.message || "Internal Server Error"
     );
   }
 };
