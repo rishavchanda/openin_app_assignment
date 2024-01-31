@@ -1,4 +1,5 @@
 import Task from "../models/Tasks.js";
+import SubTask from "../models/Subtasks.js";
 import { createError } from "../error.js";
 
 // CREATE NEW TASK FOR A USER
@@ -153,6 +154,14 @@ export const deleteTask = async (req, res, next) => {
     // Check if task belongs to user
     if (task?.user_id != user_id) {
       return next(createError(401, "You can't delete this task!"));
+    }
+
+    // Find and soft delete all associated subtasks
+    const subtasks = await SubTask.find({ task_id: task._id });
+
+    for (const subtask of subtasks) {
+      subtask.deleted_at = new Date();
+      await subtask.save();
     }
 
     // Perform soft delete by updating deleted_at field
