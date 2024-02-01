@@ -17,6 +17,13 @@ export const createUser = async (req, res, next) => {
       return next(createError(400, "Phone number and priority are required."));
     }
 
+    const checkUser = await User.findOne({ phone_number: phone_number });
+    if (checkUser) {
+      return next(
+        createError(400, "User Already exist with this phone number!")
+      );
+    }
+
     // Create a new user with phone_number
     const newUser = new User({
       phone_number,

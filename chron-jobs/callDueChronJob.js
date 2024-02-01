@@ -20,6 +20,7 @@ export default cron.schedule("0 * * * *", async () => {
     // Find all tasks that are not soft-deleted and overdue
     const overdueTasks = await Task.find({
       deleted_at: null,
+      status: { $in: ["TODO", "IN_PROGRESS"] },
       due_date: { $lt: new Date() },
     }).populate("user_id");
 
